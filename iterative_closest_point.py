@@ -179,13 +179,13 @@ def main():
 	#q = np.random.uniform(low, high, (N, dim))
 
 	p_json_filename = 'PointData1.json'
-	q_json_filename = 'PointData3.json'
+	q_json_filename = 'PointData2.json'
 	p, q = load_points_json(p_json_filename, q_json_filename)
 	low = min(np.min(p), np.min(q))
 	high = max(np.max(p), np.max(q))
 
 	# Run ICP algorithm (SVD-based variant)
-	T, distances, p_new = iterative_closest_point(p, q, low, high, tol = 1e-50)
+	T, distances, p_new = iterative_closest_point(p, q, low, high, tol = 1e-10)
 
 	print('\n')
 	print('---------------------------------------------------')
