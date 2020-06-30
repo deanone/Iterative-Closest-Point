@@ -2,6 +2,36 @@ import numpy as np
 from sklearn.neighbors import NearestNeighbors
 from mpl_toolkits.mplot3d import Axes3D
 import matplotlib.pyplot as plt
+import json
+
+
+def load_points_json(p_json_filename, q_json_filename):
+	
+	# p point cloud
+	f = open(p_json_filename)
+	p_json = json.load(f)
+	p_json = p_json['points']
+	p = []
+	for key, point in p_json.items():
+		p.append(point)
+	p = np.array(p)
+	f.close()
+
+	# q point cloud
+	f = open(q_json_filename)
+	q_json = json.load(f)
+	q_json = q_json['points']
+	q = []
+	for key, point in q_json.items():
+		q.append(point)
+	q = np.array(q)
+	f.close()
+
+	min_shape = min(p.shape[0], q.shape[0])
+	p = p[:min_shape, :]
+	q = q[:min_shape, :]
+
+	return p, q
 
 
 def fit_p_to_q(p, q):
@@ -130,23 +160,29 @@ def iterative_closest_point(p, q, low, high, max_iter = 50, tol = 1e-5):
 def main():
 
 	# for results reproducibility
-	np.random.seed(42)
+	#np.random.seed(42)
 
 	# number of points in point cloud
-	N = 10
+	#N = 10
 
 	# dimension of the point cloud (e.g. 3D)
-	dim = 3
+	#dim = 3
 
 	# lower of the interval from which the random values of the coordinates of the points will be drawn
-	low = -1000
+	#low = -1000
 
 	# higher of the interval from which the random values of the coordinates of the points will be drawn
-	high = 1000
+	#high = 1000
 
 	# cloud points with (uniform) random coordinates
-	p = np.random.uniform(low, high, (N, dim))
-	q = np.random.uniform(low, high, (N, dim))
+	#p = np.random.uniform(low, high, (N, dim))
+	#q = np.random.uniform(low, high, (N, dim))
+
+	p_json_filename = 'PointData1.json'
+	q_json_filename = 'PointData3.json'
+	p, q = load_points_json(p_json_filename, q_json_filename)
+	low = min(np.min(p), np.min(q))
+	high = max(np.max(p), np.max(q))
 
 	# Run ICP algorithm (SVD-based variant)
 	T, distances, p_new = iterative_closest_point(p, q, low, high, tol = 1e-50)
